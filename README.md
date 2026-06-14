@@ -18,19 +18,28 @@ On your physical Linux machine, you need to install the Zenoh DDS bridge and sta
 
 1. **Install ROS 2 Jazzy** natively (if not already installed).
 2. **Install Zenoh DDS Bridge:**
-   Depending on your Linux distro, you can download the pre-compiled binary:
+   Depending on your Linux architecture, download the correct pre-compiled binary:
+
+   **For x86_64 (Intel/AMD) Linux:**
    ```bash
-   # Download the latest zenoh-bridge-dds release
-   curl -L https://github.com/eclipse-zenoh/zenoh-plugin-dds/releases/latest/download/zenoh-bridge-dds-x86_64-unknown-linux-gnu.zip -o zenoh-bridge.zip
+   curl -L https://github.com/eclipse-zenoh/zenoh-plugin-dds/releases/latest/download/zenoh-plugin-dds-1.9.0-x86_64-unknown-linux-gnu-standalone.zip -o zenoh-bridge.zip
+   unzip zenoh-bridge.zip
+   sudo mv zenoh-bridge-dds /usr/local/bin/
+   ```
+
+   **For aarch64/ARM64 Linux (e.g., Ubuntu in UTM on Apple Silicon, Raspberry Pi):**
+   ```bash
+   curl -L https://github.com/eclipse-zenoh/zenoh-plugin-dds/releases/latest/download/zenoh-plugin-dds-1.9.0-aarch64-unknown-linux-gnu-standalone.zip -o zenoh-bridge.zip
    unzip zenoh-bridge.zip
    sudo mv zenoh-bridge-dds /usr/local/bin/
    ```
    *(Alternatively, you can install via `cargo install zenoh-bridge-dds` if you have Rust installed).*
 
-3. **Start the Bridge in Listen Mode:**
-   Open a terminal and run the bridge. This tells it to listen for incoming connections on port `7447` from your Mac and Windows machines.
+3.    **Start the Bridge:**
+   Open a terminal and run the bridge. We use `-a ".*"` to ensure *all* ROS 2 topics are explicitly allowed and routed.
    ```bash
-   zenoh-bridge-dds -l tcp/0.0.0.0:7447
+   export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+   zenoh-bridge-dds -l tcp/0.0.0.0:7447 -a ".*"
    ```
 
 4. **Find the Linux Machine's LAN IP:**

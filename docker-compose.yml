@@ -8,6 +8,7 @@ services:
     network_mode: "host"
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
     # Keep the container alive so we can exec into it and run talker/listener
     command: tail -f /dev/null
 
@@ -16,6 +17,8 @@ services:
     container_name: ros2_zenoh_bridge
     network_mode: "host"
     # The bridge connects to the Linux machine's IP on port 7447
-    command: ["-e", "tcp/${LINUX_IP}:7447"]
+    # -a ".*" tells the bridge to allow/route ALL DDS topics and ignore discovery filters
+    command: ["-e", "tcp/${LINUX_IP}:7447", "-a", ".*"]
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
