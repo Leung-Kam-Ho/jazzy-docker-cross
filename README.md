@@ -8,7 +8,7 @@ It bypasses Docker Desktop's lack of real bridge mode by tunneling DDS multicast
 
 ## Why This Zenoh Solution is Better
 
-If you have researched this problem online, you likely found the standard workarounds: writing complex `fastdds.xml` profiles, hardcoding IP addresses for Discovery Servers, or relying on Windows 11's WSL Mirrored Mode (which doesn't work on Mac). 
+If you have researched this problem online, you likely found the standard workarounds: writing complex `fastdds.xml` profiles, hardcoding IP addresses for Discovery Servers, or relying on Windows 11's WSL Mirrored Mode (which doesn't work on Mac && you will face some issues with ros2 daemon). 
 
 What we have built in this repository is significantly more elegant than the standard community workarounds:
 
