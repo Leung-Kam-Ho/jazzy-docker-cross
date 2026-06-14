@@ -150,30 +150,6 @@ windows\4_stop_docker_env.bat
 
 ---
 
-## Obstacles Faced & Lessons Learned
-
-Creating a completely offline, real-time, cross-platform bridge between isolated Docker VMs and native machines came with several unique challenges:
-
-### 1. Docker Desktop Networking Limitations
-**The Problem:** Docker Desktop on Mac and Windows runs containers inside a hidden lightweight VM. Unlike native Linux, Docker Desktop does not support true `--network="host"`. DDS relies entirely on UDP Multicast for node discovery, which simply does not pass through the VM's NAT boundary.
-**The Solution:** Using `zenoh-bridge-dds`. By deploying a Zenoh bridge sidecar container *inside* the Docker VM and sharing the VM's network namespace, we captured the DDS multicast traffic locally and tunneled it via standard TCP over port `7447` out to the Native Linux host.
-
-### 2. Mixed DDS Vendors Over Zenoh
-**The Problem:** Ubuntu uses FastDDS by default for ROS 2, while other distributions or Docker configurations occasionally default to CycloneDDS. When tunneling DDS packets over Zenoh, mismatched RMW implementations caused the nodes to "see" each other via Zenoh discovery but silently fail to deserialize the actual messages.
-**The Solution:** Enforcing `export RMW_IMPLEMENTATION=rmw_fastrtps_cpp` across every single environment (Linux, Mac Docker, Windows Docker) guaranteed identical binary serialization.
-
-### 3. Shell Expansion Breaking Zenoh Topics
-**The Problem:** We wanted to bridge all topics dynamically using the flag `-a ".*"`. However, the `/bin/ash` shell inside the Zenoh container interpreted `.*` as a file glob and replaced it with local hidden directories (like `.` and `..`), causing Zenoh to crash with a Regex Parse Error.
-**The Solution:** By overriding the `entrypoint:` in `docker-compose.yml` to use the JSON array syntax `entrypoint: ["/zenoh-bridge-dds"]`, we bypassed shell execution entirely, preserving the raw `.*` string for the application.
-
-### 4. Zenoh Binary Architecture Mismatches
-**The Problem:** Native Linux often runs on ARM processors (like inside UTM VMs on Apple Silicon), while Windows runs on `x86_64`.
-**The Solution:** Added an architecture detection mechanism (`uname -m`) in the Linux installation script that dynamically fetches the correct standalone binary (`aarch64` vs `x86_64`) from Eclipse Zenoh's GitHub releases.
-
-### 5. Windows Docker Credential Bug
-**The Problem:** Windows Docker Desktop frequently fails to pull images due to a bug where the Windows Credential Manager authentication session expires, throwing the error: `A specified logon session does not exist. It may already have been terminated.`
-**The Solution:** Running `docker logout` in PowerShell clears the corrupt credential state, allowing the user to pull the public `eclipse/zenoh-bridge-dds` image seamlessly.
-
 ## Roadmap / Future Work
 
 ### 1. Direct Mac Docker ↔ Windows Docker Communication
