@@ -16,16 +16,29 @@ gen_keys() {
         return
     fi
     echo "  Generating keys for $label..."
-    docker pull -q linuxserver/wireguard > /dev/null 2>&1 || true
-    local tmp
-    tmp=$(docker run --rm --entrypoint sh linuxserver/wireguard -c "
-        umask 077
-        priv=\$(wg genkey)
-        echo \"\$priv\"
-        echo \"\$priv\" | wg pubkey
-    " 2>/dev/null)
-    echo "$tmp" | sed -n '1p' > "$WG_DIR/${label}_private"
-    echo "$tmp" | sed -n '2p' > "$WG_DIR/${label}_public"
+
+    if command -v wg >/dev/null 2>&1; then
+        local priv pub
+        priv=$(umask 077; wg genkey)
+        pub=$(echo "$priv" | wg pubkey)
+        echo "$priv" > "$WG_DIR/${label}_private"
+        echo "$pub"  > "$WG_DIR/${label}_public"
+    elif command -v docker >/dev/null 2>&1; then
+        docker pull -q linuxserver/wireguard > /dev/null 2>&1 || true
+        local tmp
+        tmp=$(docker run --rm --entrypoint sh linuxserver/wireguard -c "
+            umask 077
+            priv=\$(wg genkey)
+            echo \"\$priv\"
+            echo \"\$priv\" | wg pubkey
+        " 2>/dev/null)
+        echo "$tmp" | sed -n '1p' > "$WG_DIR/${label}_private"
+        echo "$tmp" | sed -n '2p' > "$WG_DIR/${label}_public"
+    else
+        echo "ERROR: Need 'wg' (wireguard-tools) or Docker to generate keys."
+        echo "  Install: sudo apt install wireguard-tools"
+        exit 1
+    fi
     echo "  Keys saved"
 }
 
