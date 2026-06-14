@@ -100,15 +100,19 @@ EOF
         gen_keys "$NAME"
 
         if [ ! -f "$WG_DIR/linux_public" ]; then
-            echo "ERROR: First run './wg_setup.sh linux <MAC_LAN_IP>' on Linux and copy wg_config/"
+            echo "  Keys for '$NAME' saved, but no linux_public found."
+            echo "  Copy wg_config/ from Mac to Linux and run:"
+            echo "    ./wg_setup.sh linux <MAC_LAN_IP>"
+            echo "  Then re-run: ./wg_setup.sh container $NAME $IP"
             exit 1
         fi
         LINUX_PUB=$(cat "$WG_DIR/linux_public")
 
         cat > "$WG_DIR/${NAME}.conf" << EOF
 [Interface]
-Address = $IP/32
+Address = $IP/24
 PrivateKey = $(cat "$WG_DIR/${NAME}_private")
+Table = off
 
 [Peer]
 PublicKey = $LINUX_PUB
@@ -120,12 +124,12 @@ EOF
         echo "  Container IP: $IP"
         echo ""
 
-        echo "=== Also add this peer to Mac host ($WG_DIR/wg0.conf) ==="
+        echo "=== Add this peer to Mac host ($WG_DIR/wg0.conf) ==="
         echo "[Peer]"
         echo "PublicKey = $(cat "$WG_DIR/${NAME}_public")"
         echo "AllowedIPs = $IP/32"
         echo ""
-        echo "Then: docker compose restart or restart the sidecar."
         echo "Run container: ./run_r2_jazzy.sh $NAME"
+        echo "On Linux, ensure $IP is in AllowedIPs (it is if using 10.0.0.0/24)"
         ;;
 esac

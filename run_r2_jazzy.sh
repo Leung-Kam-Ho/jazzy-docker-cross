@@ -32,6 +32,7 @@ else
     echo "  Discovery server: $DISCOVERY_SERVER:11811"
     echo "  Config: $CONFIG"
 
+    WG_IP=$(grep '^Address' "$CONFIG" | head -1 | awk '{print $3}' | cut -d/ -f1)
     mkdir -p /tmp/dds_profiles
     cat > "/tmp/dds_profiles/${NAME}.xml" << EOF
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -42,7 +43,7 @@ else
                 <transport_id>UDPv4Transport</transport_id>
                 <type>UDPv4</type>
                 <interfaceWhiteList>
-                    <address>10.0.0.10</address>
+                    <address>$WG_IP</address>
                 </interfaceWhiteList>
             </transport_descriptor>
         </transport_descriptors>
@@ -68,13 +69,14 @@ EOF
         -e DISPLAY=host.docker.internal:0 \
         -e ROS_DOMAIN_ID="$DOMAIN_ID" \
         -e ROS_DISCOVERY_SERVER="$DISCOVERY_SERVER:11811" \
-        -e FASTDDS_BUILTIN_TRANSPORTS=UDPv4 \
         -e FASTRTPS_DEFAULT_PROFILES_FILE=/fastdds_profile.xml \
         --entrypoint bash \
         r2_jazzy \
         -c "
-wg-quick up /etc/wireguard/wg0.conf 2>&1
-echo 'WireGuard up'
+WG_IP=\"$WG_IP\"
+wg-quick up /etc/wireguard/wg0.conf
+ip route add 10.0.0.0/24 dev wg0 2>/dev/null || true
+echo 'WireGuard up — IP: \$WG_IP'
 echo 'ROS 2 ready — run ros2 commands'
 bash"
 fi
