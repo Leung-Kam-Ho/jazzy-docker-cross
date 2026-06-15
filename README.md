@@ -123,13 +123,13 @@ Open a terminal (Mac) or Command Prompt/PowerShell (Windows) and run the scripts
 You can test communication in both directions using the provided scripts.
 
 **Test 1: Mac/Windows Talker ➡️ Linux Listener**
-1. On Linux, run: `./native_linux/4_run_listener.sh`
+1. On Linux, run: `./linux/4_run_listener.sh`
 2. On Mac, run: `./mac/2_run_talker.sh` (or `windows\2_run_talker.bat` on Windows)
 3. You should see `Hello World` appearing on the Linux listener!
 
 **Test 2: Linux Talker ➡️ Mac/Windows Listener**
 1. On Mac, run: `./mac/3_run_listener.sh` (or `windows\3_run_listener.bat` on Windows)
-2. On Linux, run: `./native_linux/3_run_talker.sh`
+2. On Linux, run: `./linux/3_run_talker.sh`
 3. You should see `Hello World` appearing on the Mac/Windows listener!
 
 ---
