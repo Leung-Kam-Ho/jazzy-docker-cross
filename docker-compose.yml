@@ -22,7 +22,8 @@ services:
     # Override entrypoint to avoid ash shell expanding the '.*' glob
     entrypoint: ["/zenoh-bridge-ros2dds"]
     # The bridge connects to the Linux machine's IP on port 7447
-    command: ["--connect", "tcp/${LINUX_IP}:7447", "client", "--config", "/root/workspace/zenoh_config.json"]
+    command: ["--connect", "tcp/${LINUX_IP}:7447", "client"]
+    # --config /root/workspace/zenoh_config.json
     volumes:
       - .:/root/workspace
     environment:
