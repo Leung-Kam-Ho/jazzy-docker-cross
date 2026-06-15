@@ -5,12 +5,6 @@ echo "=========================================="
 echo "ROS 2 Zenoh Bridge Speed Test (Mac Docker)"
 echo "=========================================="
 
-echo "Starting Docker Environment..."
-docker-compose up -d --build
-
-echo "Waiting for Zenoh Bridge to connect..."
-sleep 5
-
 echo "Stopping any existing talker..."
 docker exec ros2_jazzy_node pkill -f blob_talker.py 2>/dev/null || true
 
