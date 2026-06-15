@@ -16,7 +16,10 @@ class BlobTalker(Node):
         self.get_logger().info('Buffer prepared.')
 
     def timer_callback(self):
-        self.publisher_.publish(self.msg)
+        try:
+            self.publisher_.publish(self.msg)
+        except Exception as e:
+            self.get_logger().error(f'Failed to publish: {e}')
 
 def main(args=None):
     rclpy.init(args=args)

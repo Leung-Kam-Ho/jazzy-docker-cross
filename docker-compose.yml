@@ -22,7 +22,7 @@ services:
     # Override entrypoint to avoid ash shell expanding the '.*' glob
     entrypoint: ["/zenoh-bridge-ros2dds"]
     # The bridge connects to the Linux machine's IP on port 7447
-    command: ["--connect", "tcp/${LINUX_IP}:7447", "client"]
+    command: ["--connect", "tcp/${LINUX_IP}:7447", "client", "--config", "{\"transport\":{\"unicast\":{\"lowlatency\":true,\"tcp\":{\"no_delay\":true}}}}"]
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
       - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
