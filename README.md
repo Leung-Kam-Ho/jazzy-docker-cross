@@ -145,12 +145,15 @@ To measure actual bandwidth and latency:
    ```bash
    ./tests/2_linux_speed_listener.sh
    ```
-2. **On Mac/Windows**, start the 1MB @ 50Hz talker:
+2. **On Mac/Windows**, start the default benchmark (150KB @ 100Hz):
    ```bash
    ./tests/1_mac_speed_talker.sh
    ```
 
----
+To simulate a high-resolution Lidar (1.5MB @ 10Hz), run this in your Mac/Windows terminal:
+```bash
+./tests/1_mac_speed_talker.sh 1572864 10
+```
 
 ## Step 6: Shutting Down
 
