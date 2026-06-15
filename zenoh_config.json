@@ -1,6 +1,9 @@
 {
   "transport": {
     "unicast": {
+      "qos": {
+        "enabled": false
+      },
       "lowlatency": true
     }
   }
