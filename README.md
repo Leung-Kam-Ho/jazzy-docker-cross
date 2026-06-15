@@ -57,6 +57,10 @@ We've organized the workflow into simple scripts for each platform:
 ├── fastdds_tuning.xml    # Performance tuning for ROS 2 (FastDDS)
 ├── docker-compose.yml    # Docker setup for Mac/Windows
 ├── Dockerfile            # ROS 2 Jazzy image definition
+├── scripts/              # Helper scripts for running and stopping ROS 2
+│   ├── run_r2_jazzy.sh
+│   ├── run_r2_jazzy.bat
+│   └── stop_all_containers.sh
 ├── mac/                  # Scripts for MacOS
 │   ├── 1_start_docker_env.sh
 │   ├── ...
