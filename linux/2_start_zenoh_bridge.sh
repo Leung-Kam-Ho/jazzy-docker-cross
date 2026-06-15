@@ -7,6 +7,5 @@ if [ ! -f "./zenoh-bridge-ros2dds" ]; then
 fi
 
 echo "Starting Zenoh ROS2 Bridge on Native Linux (Listening on TCP 7447)..."
-echo "Allowing all DDS topics via regex: .*"
 export RUST_LOG=info
-./zenoh-bridge-ros2dds -l tcp/0.0.0.0:7447 -a ".*"
+./zenoh-bridge-ros2dds -l tcp/0.0.0.0:7447
